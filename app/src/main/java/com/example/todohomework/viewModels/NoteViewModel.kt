@@ -16,7 +16,7 @@ class NoteViewModel : ViewModel() {
     fun addNote(title: String, content: String) {
         if (title.isBlank() || content.isBlank()) return
         val newNote = Note(id = nextId++, title = title, content = content)
-        _notes.value = _notes.value + newNote // Оновлюємо список через додавання нового елемента
+        _notes.value = _notes.value + newNote
     }
 }
 
