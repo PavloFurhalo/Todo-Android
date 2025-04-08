@@ -1,6 +1,6 @@
 package com.example.todohomework.screens
-
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -40,7 +40,7 @@ fun MainScreen(
             } else {
                 LazyColumn {
                     items(notes) { note ->
-                        NoteItem(note = note, onClick = { onNoteClick(note) })
+                        NoteItem(note = note, onClick = { onNoteClick(note) }, onLongClick = {viewModel.deleteNote(note)})
                     }
                 }
             }
@@ -48,13 +48,17 @@ fun MainScreen(
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun NoteItem(note: Note, onClick: () -> Unit) {
+fun NoteItem(note: Note, onClick: () -> Unit, onLongClick: () -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 8.dp, vertical = 4.dp)
-            .clickable(onClick = onClick),
+            .combinedClickable(
+                onClick = onClick,
+                onLongClick = onLongClick
+            ),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.background
         ),

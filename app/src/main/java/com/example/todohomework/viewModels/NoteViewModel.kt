@@ -1,23 +1,30 @@
 package com.example.todohomework.viewModels
-
-import androidx.lifecycle.ViewModel
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.todohomework.data.MyRoomDatabase
 import com.example.todohomework.data.Note
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import com.example.todohomework.repository.NoteRepository
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 
-
-class NoteViewModel : ViewModel() {
-    private val _notes = MutableStateFlow<List<Note>>(emptyList())
-    val notes: StateFlow<List<Note>> = _notes.asStateFlow()
-
-    private var nextId = 1
+class NoteViewModel(application: Application) : AndroidViewModel(application) {
+    private val dao = MyRoomDatabase.getDatabase(application).noteDao()
+    private val repo = NoteRepository(dao)
+    val notes = repo.notes.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
 
     fun addNote(title: String, content: String) {
-        if (title.isBlank() || content.isBlank()) return
-        val newNote = Note(id = nextId++, title = title, content = content)
-        _notes.value = _notes.value + newNote
+        viewModelScope.launch {
+            repo.insert(Note(title = title, content = content))
+        }
+    }
+
+    fun deleteNote(note: Note) {
+        viewModelScope.launch { repo.delete(note) }
+    }
+
+    fun updateNote(note: Note) {
+        viewModelScope.launch { repo.update(note) }
     }
 }
-
-

@@ -1,15 +1,13 @@
 package com.example.todohomework.screens
-
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.todohomework.data.Note
 
 @Composable
-fun NoteDetailScreen(note: Note, onBack: () -> Unit) {
+fun NoteDetailScreen(note: Note, onBack: () -> Unit, onEdit: (Note) -> Unit) {
     Scaffold { padding ->
         Column(
             modifier = Modifier
@@ -23,11 +21,17 @@ fun NoteDetailScreen(note: Note, onBack: () -> Unit) {
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            Button(
-                onClick = onBack,
-                modifier = Modifier.align(Alignment.CenterHorizontally)
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Text("Back")
+                Button(onClick = onBack) {
+                    Text("Назад")
+                }
+
+                Button(onClick = { onEdit(note) }) {
+                    Text("Редагувати")
+                }
             }
         }
     }

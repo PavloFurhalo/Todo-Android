@@ -6,16 +6,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.todohomework.data.Note
 import com.example.todohomework.viewModels.NoteViewModel
 
 @Composable
-fun AddNoteScreen(
-    onNoteSaved: () -> Unit,
-    viewModel: NoteViewModel = viewModel()
+fun EditNoteScreen(
+    note: Note,
+    viewModel: NoteViewModel,
+    onNoteUpdated: () -> Unit
 ) {
-    var title by remember { mutableStateOf(TextFieldValue("")) }
-    var content by remember { mutableStateOf(TextFieldValue("")) }
+    var title by remember { mutableStateOf(TextFieldValue(note.title)) }
+    var content by remember { mutableStateOf(TextFieldValue(note.content)) }
 
     Scaffold { padding ->
         Column(
@@ -24,20 +25,19 @@ fun AddNoteScreen(
                 .padding(padding)
                 .padding(16.dp)
         ) {
-            OutlinedTextField(
+            TextField(
                 value = title,
                 onValueChange = { title = it },
-                label = { Text("Title") },
-                singleLine = true,
+                label = { Text("Заголовок") },
                 modifier = Modifier.fillMaxWidth()
             )
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            OutlinedTextField(
+            TextField(
                 value = content,
                 onValueChange = { content = it },
-                label = { Text("Text") },
+                label = { Text("Текст") },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(150.dp)
@@ -48,13 +48,17 @@ fun AddNoteScreen(
             Button(
                 onClick = {
                     if (title.text.isNotBlank() && content.text.isNotBlank()) {
-                        viewModel.addNote(title.text, content.text)
-                        onNoteSaved()
+                        val updatedNote = note.copy(
+                            title = title.text,
+                            content = content.text
+                        )
+                        viewModel.updateNote(updatedNote)
+                        onNoteUpdated()
                     }
                 },
                 modifier = Modifier.align(Alignment.CenterHorizontally)
             ) {
-                Text("Save")
+                Text("Зберегти")
             }
         }
     }
